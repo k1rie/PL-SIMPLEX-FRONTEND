@@ -19,6 +19,9 @@ function App() {
     const num = Math.max(1, Math.min(10, parseInt(newNum) || 2)) // Límite entre 1 y 10 variables
     setNumVariables(num)
     
+    // Resetear resultados anteriores al cambiar número de variables
+    setResult(null)
+    
     // Actualizar coeficientes de función objetivo
     const newObjectiveCoeffs = Array(num).fill(0)
     objectiveCoefficients.forEach((coeff, i) => {
@@ -142,6 +145,8 @@ function App() {
       return
     }
 
+    // Resetear el estado anterior
+    setResult(null)
     setIsLoading(true)
     
     // Generar nombres de variables
