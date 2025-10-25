@@ -1,0 +1,975 @@
+/* App Container */
+.app {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  color: #ffffff;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+}
+
+.brain-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  filter: grayscale(100%) brightness(0.8);
+}
+
+.header h1 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin: 0;
+  background: linear-gradient(45deg, #ffffff, #cccccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #888888;
+  margin-top: 0.5rem;
+  font-weight: 300;
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    gap: 2rem;
+  }
+}
+
+/* Form Section */
+.form-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.optimization-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Input Groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.label-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.label-desc {
+  font-size: 0.9rem;
+  color: #888888;
+  font-style: italic;
+}
+
+/* Math Inputs */
+.math-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-family: 'SF Mono', monospace;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.math-input:focus {
+  outline: none;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.math-input::placeholder {
+  color: #666666;
+  font-style: italic;
+}
+
+/* Coefficients Layout */
+.coefficients-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.coefficient-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 80px;
+}
+
+.variable-label {
+  font-size: 0.9rem;
+  color: #cccccc;
+  font-weight: 500;
+  text-align: center;
+  font-family: 'SF Mono', monospace;
+}
+
+.coefficient-input {
+  width: 80px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.number-input {
+  width: 100px;
+}
+
+/* Constraints Section */
+.constraints-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.constraint-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.constraint-equation {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.operator-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.operator-select {
+  width: 80px;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.constraint-preview {
+  font-family: 'SF Mono', monospace;
+  font-size: 1.1rem;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+}
+
+/* Buttons */
+.add-btn, .remove-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.add-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.add-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.remove-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+.remove-btn:hover {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Solve Button */
+.solve-btn {
+  background: linear-gradient(45deg, #333333, #555555);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: #ffffff;
+  padding: 1.2rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  flex: 1;
+  min-width: 200px;
+}
+
+.solve-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #444444, #666666);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.solve-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Test Button */
+.test-btn {
+  background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #cccccc;
+  padding: 1.2rem 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  min-width: 200px;
+}
+
+.test-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.test-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Result Section */
+.result-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.result-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ffffff;
+}
+
+.result-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-label {
+  font-weight: 500;
+  color: #cccccc;
+}
+
+.result-value {
+  font-family: 'SF Mono', monospace;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.result-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+  color: #ccffcc;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Preview Section */
+.preview-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.preview-item {
+  margin-bottom: 1rem;
+  font-family: 'SF Mono', monospace;
+}
+
+.preview-item strong {
+  color: #cccccc;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.preview-item ul {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+}
+
+.preview-item li {
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+/* Info Section */
+.info-section {
+  margin-top: 3rem;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.info-card h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-card li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cccccc;
+}
+
+.info-card li:last-child {
+  border-bottom: none;
+}
+
+.info-card strong {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Status Section */
+.result-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.status-code {
+  font-family: 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #888888;
+}
+
+.status-message {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.status-indicator[data-status="5"] .status-message {
+  color: #4ade80; /* Verde para solución óptima */
+}
+
+.status-indicator[data-status="3"] .status-message,
+.status-indicator[data-status="4"] .status-message {
+  color: #f87171; /* Rojo para infactible */
+}
+
+.status-indicator[data-status="6"] .status-message {
+  color: #fbbf24; /* Amarillo para no acotada */
+}
+
+.status-indicator[data-status="0"] .status-message {
+  color: #f87171; /* Rojo para errores */
+}
+
+.execution-time {
+  font-family: 'SF Mono', monospace;
+  font-size: 0.9rem;
+  color: #888888;
+  font-weight: 500;
+}
+
+/* Optimal Value */
+.optimal-value {
+  font-size: 1.3rem;
+  color: #4ade80;
+  font-weight: 700;
+}
+
+/* Variables Section */
+.variables-section, .dual-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.variables-section h4, .dual-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.variables-grid, .dual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.variable-item, .dual-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.variable-name, .constraint-name {
+  font-family: 'SF Mono', monospace;
+  font-weight: 600;
+  color: #cccccc;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.variable-value, .dual-value {
+  font-family: 'SF Mono', monospace;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+/* Problem Summary */
+.problem-summary {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.problem-summary h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.summary-item {
+  margin-bottom: 1rem;
+  font-family: 'SF Mono', monospace;
+}
+
+.summary-item strong {
+  color: #cccccc;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.objective-text {
+  color: #ffffff;
+  font-weight: 600;
+  display: block;
+  margin-left: 1rem;
+}
+
+.constraints-list {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.constraint-text {
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  padding: 0.3rem 0;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  padding-left: 0.8rem;
+}
+
+/* API Message */
+.api-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+  color: #ccffcc;
+  font-size: 0.9rem;
+  text-align: center;
+  font-family: 'SF Mono', monospace;
+}
+
+/* Error Message */
+.result-card[data-error="true"] .api-message {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  color: #ffcccc;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-section {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .form-section, .result-section, .info-card {
+    padding: 1.5rem;
+  }
+  
+  .coefficients-row {
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  
+  .coefficient-group {
+    min-width: 70px;
+  }
+  
+  .coefficient-input {
+    width: 70px;
+  }
+  
+  .operator-group {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .constraint-row {
+    padding: 1rem;
+  }
+  
+  .remove-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  
+  .preview-section {
+    padding: 1rem;
+  }
+  
+  .result-status {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .variables-grid, .dual-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .variables-section, .dual-section, .problem-summary {
+    padding: 1rem;
+  }
+  
+  .summary-item strong {
+    font-size: 0.9rem;
+  }
+  
+  .objective-text {
+    margin-left: 0;
+    font-size: 0.9rem;
+  }
+  
+  .constraints-list {
+    margin-left: 0;
+  }
+  
+  .constraint-text {
+    font-size: 0.9rem;
+    padding-left: 0.5rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .solve-btn, .test-btn {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+/* Augmented Model Section */
+.augmented-model {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid #2a4a6b;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.augmented-model h4 {
+  color: #64b5f6;
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  border-bottom: 2px solid #2a4a6b;
+  padding-bottom: 0.5rem;
+}
+
+.augmented-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.constraint-comparison {
+  background: rgba(42, 74, 107, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-left: 3px solid #64b5f6;
+}
+
+.original-constraint {
+  margin-bottom: 0.8rem;
+  color: #cccccc;
+}
+
+.original-constraint strong {
+  color: #90caf9;
+  font-weight: 500;
+}
+
+.augmented-constraint {
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.augmented-constraint strong {
+  color: #4fc3f7;
+  font-weight: 600;
+}
+
+.added-variable {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  padding: 0.6rem;
+  color: #a5d6a7;
+  font-size: 0.9rem;
+}
+
+.added-variable strong {
+  color: #81c784;
+  font-weight: 500;
+}
+
+.variables-text {
+  color: #4fc3f7;
+  font-weight: 500;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.count-text {
+  color: #ffb74d;
+  font-weight: 500;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.augmented-objective {
+  color: #4fc3f7 !important;
+  font-weight: 600 !important;
+  background: rgba(79, 195, 247, 0.1);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #4fc3f7;
+  display: inline-block;
+  margin-top: 0.3rem;
+}
+
+/* Responsive design for augmented model */
+@media (max-width: 768px) {
+  .augmented-model {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .augmented-model h4 {
+    font-size: 1.1rem;
+  }
+  
+  .constraint-comparison {
+    padding: 0.8rem;
+  }
+  
+  .original-constraint, .augmented-constraint {
+    font-size: 0.9rem;
+  }
+  
+  .added-variable {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Iterations Section */
+.iterations-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+  border: 1px solid rgba(100, 181, 246, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.iterations-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #64b5f6;
+  font-weight: 500;
+  border-bottom: 2px solid rgba(100, 181, 246, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.iterations-description {
+  color: #cccccc;
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+  font-style: italic;
+}
+
+.iterations-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.iterations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.iterations-table th {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 2px solid rgba(100, 181, 246, 0.4);
+  font-size: 1rem;
+}
+
+.iterations-table td {
+  padding: 0.8rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.iterations-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.iterations-table tbody tr:hover {
+  background: rgba(100, 181, 246, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.z-value {
+  font-family: 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #4fc3f7;
+}
+
+.optimal-row {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(129, 199, 132, 0.2) 100%) !important;
+  border-top: 2px solid #4caf50;
+}
+
+.optimal-row:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(129, 199, 132, 0.3) 100%) !important;
+}
+
+.optimal-row td {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.z-value.optimal {
+  color: #4ade80;
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+/* Responsive design for iterations table */
+@media (max-width: 768px) {
+  .iterations-section {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .iterations-section h4 {
+    font-size: 1.1rem;
+  }
+  
+  .iterations-description {
+    font-size: 0.9rem;
+  }
+  
+  .iterations-table th,
+  .iterations-table td {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .z-value {
+    font-size: 1rem;
+  }
+  
+  .z-value.optimal {
+    font-size: 1.1rem;
+  }
+}

@@ -1,0 +1,54 @@
+.pop-up {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.pop-up h1 {
+  color: #ffffff;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.pop-up p {
+  margin: 10px 0;
+  line-height: 1.5;
+  color: #cccccc;
+}
+
+.pop-up a {
+  color: #4a9eff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.pop-up a:hover {
+  text-decoration: underline;
+  color: #66b3ff;
+}
+
+.pop-up button {
+  background: #4a9eff;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.pop-up button:hover {
+  background: #66b3ff;
+}
