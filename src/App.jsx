@@ -279,7 +279,7 @@ function App() {
         statusMessage: getStatusMessage(apiResult.status),
         executionTime: data.result?.time || 0,
         message: data.message || 'Sin mensaje',
-        iterations: data.result?.iterations || [0, 6], // Valores de z antes de encontrar el óptimo
+        iterations: data.iterations || [], // Valores de z antes de encontrar el óptimo
         inputData: {
           variableNames: inputData.variable_names || generateVariableNames(numVariables),
           originalExpressions: inputData.original_expressions || {
