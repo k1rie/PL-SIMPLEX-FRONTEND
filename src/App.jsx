@@ -1,6 +1,24 @@
 import { useState } from 'react'
 import './App.css'
 import PopUp from './componentes/pop-up'
+import { 
+  Brain, 
+  Plus, 
+  X, 
+  AlertTriangle, 
+  AlertCircle,
+  CheckCircle, 
+  XCircle, 
+  Target, 
+  ClipboardList, 
+  Lock, 
+  Settings, 
+  BarChart3,
+  Calculator,
+  Zap,
+  FileText,
+  Variable
+} from 'lucide-react'
 
 function App() {
   const [numVariables, setNumVariables] = useState(2)
@@ -16,7 +34,7 @@ function App() {
   
 
   const updateNumVariables = (newNum) => {
-    const num = Math.max(1, Math.min(10, parseInt(newNum) || 2)) // Límite entre 1 y 10 variables
+    const num = Math.max(1, parseInt(newNum) || 2) // Sin límite máximo de variables
     setNumVariables(num)
     
     // Resetear resultados anteriores al cambiar número de variables
@@ -44,6 +62,7 @@ function App() {
       value: 0 
     }])
   }
+
 
   const removeConstraint = (index) => {
     if (constraints.length > 1) {
@@ -91,6 +110,15 @@ function App() {
     }
 
     return { valid: true }
+  }
+
+  const validateConstraint = (constraint) => {
+    // Validar que al menos un coeficiente sea diferente de 0
+    const hasCoefficient = constraint.coefficients.some(coeff => coeff !== 0)
+    return {
+      isValid: hasCoefficient,
+      isEmpty: constraint.coefficients.every(coeff => coeff === 0) && constraint.value === 0
+    }
   }
 
   const generateVariableNames = (count) => {
@@ -244,7 +272,8 @@ function App() {
 
     // Enviar datos a la API
     try {
-      const response = await fetch('https://dying-verena-k1rie-0d38db79.koyeb.app/getMaximization', {
+      const endpoint = maximization ? '/getMaximization' : '/getMinimization'
+      const response = await fetch(`https://dying-verena-k1rie-0d38db79.koyeb.app${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -263,28 +292,59 @@ function App() {
       const apiResult = data.result?.result || {}
       const inputData = data.inputData || {}
       
-      // Interpretar el status de GLPK
+      // Interpretar el status de GLPK con mensajes más descriptivos
       const getStatusMessage = (status) => {
         const statusMessages = {
-          1: 'Solución no definida',
-          2: 'Solución factible',
-          3: 'Solución infactible', 
-          4: 'Sin solución factible',
-          5: 'Solución óptima encontrada',
-          6: 'Solución no acotada'
+          1: {
+            title: 'Solución no definida',
+            description: 'El problema no pudo ser procesado correctamente. Verifica que todos los datos estén completos.',
+            type: 'error'
+          },
+          2: {
+            title: 'Solución factible encontrada',
+            description: 'Se encontró una solución válida, pero puede no ser la óptima.',
+            type: 'warning'
+          },
+          3: {
+            title: 'Problema infactible',
+            description: 'No existe ninguna solución que satisfaga todas las restricciones. Las restricciones son contradictorias entre sí.',
+            type: 'error'
+          },
+          4: {
+            title: 'Sin solución factible',
+            description: 'No se puede encontrar una solución que cumpla con todas las restricciones especificadas.',
+            type: 'error'
+          },
+          5: {
+            title: 'Solución óptima encontrada',
+            description: 'Se encontró la mejor solución posible que satisface todas las restricciones.',
+            type: 'success'
+          },
+          6: {
+            title: 'Solución no acotada',
+            description: 'El valor de la función objetivo puede crecer infinitamente. Verifica las restricciones.',
+            type: 'error'
+          }
         }
-        return statusMessages[status] || `Status desconocido (${status})`
+        return statusMessages[status] || {
+          title: `Status desconocido (${status})`,
+          description: 'Se recibió un estado no reconocido del solver.',
+          type: 'error'
+        }
       }
+      
+      const statusInfo = getStatusMessage(apiResult.status)
       
       setResult({
         maximum: apiResult.z || null,
         variables: apiResult.vars || {},
         dual: apiResult.dual || {},
         status: apiResult.status || 0,
-        statusMessage: getStatusMessage(apiResult.status),
+        statusMessage: statusInfo,
         executionTime: data.result?.time || 0,
         message: data.message || 'Sin mensaje',
         iterations: data.iterations || [], // Valores de z antes de encontrar el óptimo
+        optimizationType: maximization ? 'maximization' : 'minimization',
         inputData: {
           variableNames: inputData.variable_names || generateVariableNames(numVariables),
           originalExpressions: inputData.original_expressions || {
@@ -301,11 +361,16 @@ function App() {
         maximum: null,
         variables: {},
         status: 0,
-        statusMessage: 'Error en la comunicación con el servidor',
+        statusMessage: {
+          title: 'Error de comunicación',
+          description: 'No se pudo conectar con el servidor de optimización. Verifica tu conexión a internet e intenta nuevamente.',
+          type: 'error'
+        },
         executionTime: 0,
         message: `Error: ${error.message}`,
         error: true,
         iterations: [], // Array vacío en caso de error
+        optimizationType: maximization ? 'maximization' : 'minimization',
         inputData: {
           variableNames: generateVariableNames(numVariables),
           originalExpressions: {
@@ -380,9 +445,11 @@ function App() {
       <PopUp />
       <div className="container">
         <header className="header">
-          <div className="brain-icon">🧠</div>
+          <div className="brain-icon">
+            <Brain size={64} />
+          </div>
           <h1>Optimización Lineal</h1>
-          <p className="subtitle">Encuentra el valor máximo de tu función objetivo</p>
+          <p className="subtitle">Encuentra el valor {maximization ? 'máximo' : 'mínimo'} de tu función objetivo</p>
         </header>
 
         <div className="main-content">
@@ -392,23 +459,50 @@ function App() {
               <div className="input-group">
                 <label className="input-label">
                   <span className="label-text">Número de Variables</span>
-                  <span className="label-desc">Entre 1 y 10</span>
+                  <span className="label-desc">Mínimo 1 variable</span>
                 </label>
                 <input
                   type="number"
                   min="1"
-                  max="10"
                   value={numVariables}
                   onChange={(e) => updateNumVariables(e.target.value)}
                   className="math-input number-input"
                 />
               </div>
 
+              {/* Tipo de Optimización */}
+              <div className="input-group">
+                <label className="input-label">
+                  <span className="label-text">Tipo de Optimización</span>
+                  <span className="label-desc">Selecciona el tipo de optimización a realizar</span>
+                </label>
+                <div className="optimization-type-selector">
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="optimizationType"
+                      checked={maximization}
+                      onChange={() => setMaximization(true)}
+                    />
+                    <span className="radio-label">Maximización</span>
+                  </label>
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="optimizationType"
+                      checked={!maximization}
+                      onChange={() => setMaximization(false)}
+                    />
+                    <span className="radio-label">Minimización</span>
+                  </label>
+                </div>
+              </div>
+
               {/* Función Objetivo */}
               <div className="input-group">
                 <label className="input-label">
                   <span className="label-text">Función Objetivo (Z)</span>
-                  <span className="label-desc">Maximizar Z = {formatObjectiveFunction()}</span>
+                  <span className="label-desc">{maximization ? 'Maximizar' : 'Minimizar'} Z = {formatObjectiveFunction()}</span>
                 </label>
                 <div className="coefficients-row">
                   {objectiveCoefficients.map((coeff, index) => (
@@ -432,74 +526,98 @@ function App() {
               {/* Restricciones */}
               <div className="constraints-section">
                 <div className="section-header">
-                  <span className="label-text">Restricciones</span>
+                  <div className="section-title">
+                    <span className="label-text">Restricciones</span>
+                    <span className="constraints-count">({constraints.length} restricción{constraints.length !== 1 ? 'es' : ''})</span>
+                  </div>
                   <button
                     type="button"
                     onClick={addConstraint}
-                    className="add-btn"
+                    className="add-constraint-btn"
                   >
-                    + Agregar
+                    <Plus size={18} />
+                    <span className="btn-text">Nueva Restricción</span>
                   </button>
                 </div>
                 
-                {constraints.map((constraint, constraintIndex) => (
-                  <div key={constraintIndex} className="constraint-row">
-                    <div className="constraint-equation">
-                      <div className="coefficients-row">
-                        {constraint.coefficients.map((coeff, coeffIndex) => (
-                          <div key={coeffIndex} className="coefficient-group">
-                            <label className="variable-label">
-                              {generateVariableNames(numVariables)[coeffIndex]}
-                            </label>
-                            <input
-                              type="number"
-                              step="any"
-                              value={coeff}
-                              onChange={(e) => updateConstraintCoefficient(constraintIndex, coeffIndex, e.target.value)}
-                              className="math-input coefficient-input"
-                              placeholder="0"
-                            />
+                <div className="constraints-list">
+                  {constraints.map((constraint, constraintIndex) => {
+                    const validation = validateConstraint(constraint)
+                    return (
+                      <div key={constraintIndex} className={`constraint-card ${!validation.isValid ? 'constraint-invalid' : ''} ${validation.isEmpty ? 'constraint-empty' : ''}`}>
+                        <div className="constraint-header">
+                          <div className="constraint-number">
+                            <span className="constraint-label">R{constraintIndex + 1}</span>
+                            {!validation.isValid && (
+                              <AlertCircle size={16} className="validation-indicator" title="Restricción incompleta" />
+                            )}
                           </div>
-                        ))}
-                      </div>
+                          <div className="constraint-preview-header">
+                            {formatConstraint(constraint)}
+                          </div>
+                          {constraints.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeConstraint(constraintIndex)}
+                              className="remove-constraint-btn"
+                              title="Eliminar restricción"
+                            >
+                              <X size={18} />
+                            </button>
+                          )}
+                        </div>
                       
-                      <div className="operator-group">
-                        <select
-                          value={constraint.operator}
-                          onChange={(e) => updateConstraintOperator(constraintIndex, e.target.value)}
-                          className="math-input operator-select"
-                        >
-                          <option value="≤">≤</option>
-                          <option value="≥">≥</option>
-                          <option value="=">=</option>
-                        </select>
+                      <div className="constraint-inputs">
+                        <div className="coefficients-section">
+                          <div className="coefficients-label">Coeficientes:</div>
+                          <div className="coefficients-grid">
+                            {constraint.coefficients.map((coeff, coeffIndex) => (
+                              <div key={coeffIndex} className="coefficient-input-group">
+                                <label className="variable-label-small">
+                                  {generateVariableNames(numVariables)[coeffIndex]}
+                                </label>
+                                <input
+                                  type="number"
+                                  step="any"
+                                  value={coeff}
+                                  onChange={(e) => updateConstraintCoefficient(constraintIndex, coeffIndex, e.target.value)}
+                                  className="math-input coefficient-input-small"
+                                  placeholder="0"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                         
-                        <input
-                          type="number"
-                          step="any"
-                          value={constraint.value}
-                          onChange={(e) => updateConstraintValue(constraintIndex, e.target.value)}
-                          className="math-input coefficient-input"
-                          placeholder="0"
-                        />
+                        <div className="operator-section">
+                          <div className="operator-label">Operador:</div>
+                          <select
+                            value={constraint.operator}
+                            onChange={(e) => updateConstraintOperator(constraintIndex, e.target.value)}
+                            className="math-input operator-select-improved"
+                          >
+                            <option value="≤">≤ (menor o igual)</option>
+                            <option value="≥">≥ (mayor o igual)</option>
+                            <option value="=">=  (igual)</option>
+                          </select>
+                        </div>
+                        
+                        <div className="value-section">
+                          <div className="value-label">Valor:</div>
+                          <input
+                            type="number"
+                            step="any"
+                            value={constraint.value}
+                            onChange={(e) => updateConstraintValue(constraintIndex, e.target.value)}
+                            className="math-input value-input-improved"
+                            placeholder="0"
+                          />
+                        </div>
                       </div>
                     </div>
-                    
-                    <div className="constraint-preview">
-                      {formatConstraint(constraint)}
-                    </div>
-                    
-                    {constraints.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeConstraint(constraintIndex)}
-                        className="remove-btn"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                ))}
+                    )
+                  })}
+                </div>
               </div>
 
               <div className="button-group">
@@ -520,16 +638,61 @@ function App() {
             <div className="result-section">
               <h3>Resultado de la Optimización</h3>
               <div className="result-card" data-error={result.error || false}>
-                {/* Status y mensaje principal */}
-                <div className="result-status">
-                  <div className="status-indicator" data-status={result.status}>
-                    <span className="status-code">Status {result.status}</span>
-                    <span className="status-message">{result.statusMessage}</span>
+                {/* Status y mensaje principal mejorado */}
+                <div className={`result-status-enhanced ${result.statusMessage.type}`}>
+                  <div className="status-header">
+                    <div className="status-icon">
+                      {result.statusMessage.type === 'success' && <CheckCircle size={32} />}
+                      {result.statusMessage.type === 'error' && <XCircle size={32} />}
+                      {result.statusMessage.type === 'warning' && <AlertTriangle size={32} />}
+                    </div>
+                    <div className="status-info">
+                      <h4 className="status-title">{result.statusMessage.title}</h4>
+                      <p className="status-description">{result.statusMessage.description}</p>
+                    </div>
                   </div>
                   <div className="execution-time">
                     Tiempo de ejecución: {(result.executionTime * 1000).toFixed(2)} ms
                   </div>
                 </div>
+
+                {/* Resumen completo del problema cuando hay solución óptima */}
+                {result.status === 5 && (
+                  <div className="solution-summary">
+                    <h4><BarChart3 size={24} className="inline-icon" /> Resumen Completo de la Solución</h4>
+                    <div className="summary-grid">
+                      <div className="summary-card">
+                        <h5><Target size={20} /> Función Objetivo</h5>
+                        <p><strong>Tipo:</strong> {result.optimizationType === 'maximization' ? 'Maximización' : 'Minimización'}</p>
+                        <p><strong>Expresión:</strong> Z = {result.inputData.originalExpressions.objective}</p>
+                        <p><strong>Valor Óptimo:</strong> <span className="optimal-value-highlight">Z = {result.maximum}</span></p>
+                      </div>
+                      
+                      <div className="summary-card">
+                        <h5><Calculator size={20} /> Variables de Decisión</h5>
+                        {Object.entries(result.variables).map(([variable, value]) => (
+                          <p key={variable}><strong>{variable}:</strong> {value}</p>
+                        ))}
+                      </div>
+                      
+                      <div className="summary-card">
+                        <h5><ClipboardList size={20} /> Restricciones Utilizadas</h5>
+                        <p><strong>Total:</strong> {result.inputData.originalExpressions.constraints.length} restricciones</p>
+                        {result.inputData.originalExpressions.constraints.map((constraint, index) => (
+                          <p key={index} className="constraint-summary">R{index + 1}: {constraint}</p>
+                        ))}
+                      </div>
+                      
+                      <div className="summary-card">
+                        <h5><Settings size={20} /> Detalles del Proceso</h5>
+                        <p><strong>Variables totales:</strong> {result.inputData.numVariables}</p>
+                        <p><strong>Iteraciones:</strong> {result.iterations.length}</p>
+                        <p><strong>Método:</strong> Algoritmo Simplex (GLPK)</p>
+                        <p><strong>Estado:</strong> Solución óptima verificada</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Valor óptimo */}
                 <div className="result-item">
@@ -595,12 +758,12 @@ function App() {
                         <div className="augmented-content">
                           <div className="summary-item">
                             <strong>Función Objetivo Original:</strong>
-                            <span className="objective-text">Maximizar Z = {augmentedModel.originalObjective}</span>
+                            <span className="objective-text">{result.optimizationType === 'maximization' ? 'Maximizar' : 'Minimizar'} Z = {augmentedModel.originalObjective}</span>
                           </div>
                           
                           <div className="summary-item">
                             <strong>Función Objetivo Aumentada:</strong>
-                            <span className="objective-text augmented-objective">Maximizar Z = {augmentedModel.augmentedObjective}</span>
+                            <span className="objective-text augmented-objective">{result.optimizationType === 'maximization' ? 'Maximizar' : 'Minimizar'} Z = {augmentedModel.augmentedObjective}</span>
                           </div>
                           
                           <div className="summary-item">
@@ -630,7 +793,7 @@ function App() {
                     <h4>Resumen del Problema</h4>
                     <div className="summary-item">
                       <strong>Función Objetivo:</strong> 
-                      <span className="objective-text">Maximizar Z = {result.inputData.originalExpressions.objective}</span>
+                      <span className="objective-text">{result.optimizationType === 'maximization' ? 'Maximizar' : 'Minimizar'} Z = {result.inputData.originalExpressions.objective}</span>
                     </div>
                     <div className="summary-item">
                       <strong>Restricciones:</strong>
